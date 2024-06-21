@@ -1,14 +1,19 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { Destination } from "../models/destination.model";
 import { getDestinations } from "../services/destination.service";
+import { RootState } from "./store";
 
 export interface DestinationState {
-  destination: Destination[];
+  destinations: Destination[];
   loading: boolean;
 }
 
 const initialState: DestinationState = {
-  destination: [],
+  destinations: [],
   loading: false,
 };
 
@@ -29,7 +34,7 @@ const destinationSlice = createSlice({
         state.loading = true;
       })
       .addCase(loadDestinations.fulfilled, (state, action) => {
-        state.destination = action.payload.destinations;
+        state.destinations = action.payload.destinations;
         state.loading = false;
       })
       .addCase(loadDestinations.rejected, (state) => {
@@ -40,3 +45,16 @@ const destinationSlice = createSlice({
 });
 
 export const destinationReducer = destinationSlice.reducer;
+
+export const selectDreamDestinations = (state: RootState) => {
+  console.trace();
+  return state.destination.destinations.filter((d) => d.isDreamDestination);
+};
+
+export const selectDreamDestinationsMemo = createSelector(
+  (state: RootState) => state.destination.destinations,
+  (destinations) => {
+    console.trace();
+    return destinations.filter((d) => d.isDreamDestination);
+  }
+);
